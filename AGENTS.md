@@ -36,7 +36,7 @@ es código y assets del proyecto.
 | `repo-config.yaml` | Config operacional del repo (`repo_type`, `tracker`, `environments`, `promotion_path`, `runtime`) — §6 *Configuración del repo* del methodology | siempre |
 | `.claude/commands/*.md` | Wrappers delgados de slash commands (~10 líneas c/u) para autocompletado del slash menu de Claude Code | sólo al invocar el comando |
 | `.agents/commands/*.md` | Bodies **canonical** de los 10 slash commands; lazy-loaded | sólo al invocar el comando |
-| `.agents/skills/` | Skills agente (Playwright, shadcn, vitest, etc., externos) | sólo cuando la skill se usa |
+| `.agents/skills/` | Skills agente. **El template no trae ninguna pre-instalada** — cada repo decide cuáles instalar (manual, vía meta-skills tipo `find-skills`/`skills.sh`, o creadas a mano). Ver `.agents/skills/README.md`. | sólo cuando la skill se usa |
 | `stack/*.md` | Convenciones técnicas del proyecto: `tech-stack`, `architecture`, `patterns`, `security`, `constraints`, `testing` | siempre (lo lee el Service Agent al implementar) |
 | `specs/<feature>/` | Una carpeta por feature: `requirements.md`, `design.md`, `tasks.md`, `status.md`, `bugs.md`, `amendments.md`, `mocks/` | sólo la feature activa |
 | `.org/contracts/` | Contratos cross-repo (opcional — sólo si hay dependencias cross-repo, §9 del methodology) | sólo si hay D-N cross-repo |
