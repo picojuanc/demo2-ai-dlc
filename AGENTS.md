@@ -34,7 +34,7 @@ es código y assets del proyecto.
 | `AGENTS.md` | Este archivo — fuente de verdad del agente, leído por Claude Code, Cursor, Codex CLI, Continue, Aider, OpenCode | siempre |
 | `CLAUDE.md` | Redirect a AGENTS.md (compat con Claude Code legacy) | siempre |
 | `repo-config.yaml` | Config operacional del repo (`repo_type`, `tracker`, `environments`, `promotion_path`, `runtime`) — §6 *Configuración del repo* del methodology | siempre |
-| `.claude/commands/*.md` | Wrappers delgados de slash commands (~10 líneas c/u) para autocompletado del slash menu de Claude Code | sólo al invocar el comando |
+| `.claude/commands/*.md` | **Symlinks** a `.agents/commands/<name>.md` (existen sólo para que el slash menu de Claude Code descubra los comandos; el body canonical es el archivo apuntado). En Windows requiere `core.symlinks=true` + developer mode. | sólo al invocar el comando (idem `.agents/commands/`) |
 | `.agents/commands/*.md` | Bodies **canonical** de los 10 slash commands; lazy-loaded | sólo al invocar el comando |
 | `.agents/skills/` | Skills agente. **El template no trae ninguna pre-instalada** — cada repo decide cuáles instalar (manual, vía meta-skills tipo `find-skills`/`skills.sh`, o creadas a mano). Ver `.agents/skills/README.md`. | sólo cuando la skill se usa |
 | `stack/*.md` | Convenciones técnicas del proyecto: `tech-stack`, `architecture`, `patterns`, `security`, `constraints`, `testing` | siempre (lo lee el Service Agent al implementar) |
