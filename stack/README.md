@@ -10,36 +10,43 @@
 > los `design.md` de cada feature salen genéricos y los tests no pueden
 > trazar a convenciones de naming.
 
+> **La metodología es agnóstica al stack**: no preescribe ni lenguaje,
+> ni framework, ni arquitectura, ni testing framework. Vos decidís.
+> Estos archivos sirven para que esa decisión quede explícita y el
+> agente la respete al implementar.
+
 ## Cómo llenar esto
 
 Dos modos:
 
 ### Modo A — conversacional (recomendado)
 
-Abre Claude Code en este repo y di algo como:
+Abrí tu agente preferido (Claude Code, OpenCode, Cursor, Codex CLI,
+Continue, Aider, etc.) en este repo y decile algo como:
 
-> *"Bootstrap del stack: arranquemos por `tech-stack.md`. Quiero usar
-> .NET 9 con EF Core y Postgres."*
+> *"Bootstrap del stack: arranquemos por `tech-stack.md`."*
 
-El Service Agent te va a hacer preguntas concretas, una a la vez, y a
-escribir los archivos a medida que decides.
+El Service Agent (definido en `AGENTS.md`) te va a hacer preguntas
+concretas, una a la vez, y a escribir los archivos a medida que
+decidís. AGENTS.md es el estándar abierto que todas las tools agente
+leen.
 
 ### Modo B — manual
 
-Edita cada archivo de esta carpeta directamente. Cuando termines, di al
-Service Agent: *"el stack está completo, sustituye los placeholders en
-AGENTS.md"*.
+Editá cada archivo de esta carpeta directamente. Cuando termines,
+decile al agente: *"el stack está completo, sustituye los placeholders
+en AGENTS.md"*.
 
 ## Orden recomendado
 
-1. `tech-stack.md` — qué lenguaje / framework / BD / runtime usas.
+1. `tech-stack.md` — qué lenguaje / framework / BD / runtime usás.
 2. `architecture.md` — qué patrón arquitectónico (Clean Arch, Hexagonal,
-   MVC, etc.).
+   MVC, Modular Monolith, Microservices, etc.).
 3. `patterns.md` — naming, formato de commits, organización de tests.
 4. `security.md` — auth, secretos, PII, compliance.
 5. `constraints.md` — qué está prohibido (anti-patrones de **este**
-   proyecto).
+   proyecto, no globales).
 6. `testing.md` — niveles de test, cobertura mínima, herramientas.
 
-Cada archivo bloquea al siguiente: no tiene sentido decidir `patterns.md`
-antes de saber qué framework usas.
+Cada archivo bloquea al siguiente: no tiene sentido decidir
+`patterns.md` antes de saber qué framework usás.
