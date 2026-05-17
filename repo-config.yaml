@@ -1,0 +1,106 @@
+# repo-config.yaml — demo2-ai-dlc
+#
+# Configuración operacional del repo. **Fuente de verdad** para tipo
+# de repo, tracker de work items, ambientes desplegables y flujo de
+# promoción. Referenciado por AGENTS.md, los slash commands de
+# .claude/commands/ y los skills.
+#
+# Reemplaza el antiguo `branch-flow.md` (que sólo cubría ramas).
+# Ver §6 *Configuración del repo* de la metodología AI-DLC.
+
+# ─── Tipo de repo ────────────────────────────────────────────────────
+# service        : servicio backend desplegable a infra (default SYC)
+# library        : paquete npm/pip/maven (sin "ambientes"; prerelease/release)
+# frontend-app   : app web/SPA con previews por PR
+# infra          : terraform / helm / pulumi (sandbox + prod típicamente)
+# custom         : declarar environments y deploy_trigger manualmente
+repo_type: service
+
+# ─── Tracker de work items ───────────────────────────────────────────
+# none           : sólo [R*.*] en commits, sin sync con boards
+# azure-devops   : [R*.*] AB#<id> (default SYC en repos productivos)
+# github-issues  : [R*.*] #<issue>
+# jira           : [R*.*] PROJ-<id>
+# linear         : [R*.*] <TEAM>-<n>
+#
+# Para migrar `none → azure-devops` (u otro): cambiar este campo,
+# añadir el bloque `tracker_config` abajo, y reiniciar la conversación
+# con el agente. NO se backfillean commits viejos (§6 metodología,
+# Migración: adoptar un tracker después del bootstrap).
+tracker: none
+
+# tracker_config:                      # descomentar cuando tracker != none
+#   org: syc
+#   project: <project-name>
+#   default_area_path: <area\\path>
+
+# ─── Ambientes y flujo de promoción ──────────────────────────────────
+# Default `repo_type: service`: pruebas → qa → main (3 ambientes).
+# Para `library` típico: sólo pruebas (prerelease) → main (release).
+# Para `infra` típico: sandbox → prod.
+# Los `name` aquí se usan en `partial-deploy-<env>` y `deployed:<env>`.
+environments:
+  - name: pruebas
+    branch: pruebas
+    deploy_trigger: auto-on-merge      # auto-on-merge | manual | scheduled | publish-prerelease | publish-release
+    gate: "Tests unit + integration + e2e verdes + 1+ reviewer del equipo"
+  - name: qa
+    branch: qa
+    deploy_trigger: auto-on-merge
+    gate: "Tests verdes + state ≥ partial-deploy-pruebas + QA sign-off"
+  - name: main
+    branch: main
+    deploy_trigger: manual             # requiere botón en pipeline / merge dirigido
+    gate: "State feature-complete + rollout-plan.md + Ops sign-off"
+
+promotion_path: [pruebas, qa, main]
+
+# ─── Servicio de diseño (opcional) ───────────────────────────────────
+# Descomentar sólo si este repo tiene dependencia de Figma/diseño.
+# Los slash commands `/figma-*` aplican únicamente si está declarado.
+# design_service:
+#   figma_team_url: https://www.figma.com/files/team/...
+
+# ─── Runtime / target de deploy (opcional) ──────────────────────────
+# openshift      : default SYC para servicios
+# k8s            : Kubernetes vanilla
+# npm-registry   : para `repo_type: library`
+# static-host    : Vercel / Netlify / S3+CloudFront
+# none           : repo no se despliega (`docs-only`, `catalog-only`)
+runtime:
+  type: TBD                            # sin decidir — ver stack/tech-stack.md § Deploy target
+  # cluster: ocp-eu-west-1
+  # namespace_pattern: "{service}-{env}"
+
+# ─── Política de feature flags (opcional) ────────────────────────────
+# feature_flags:
+#   default_at_merge_to_main: OFF
+#   cleanup_after_days_at_100pct: 90
+
+# ─── Servidores MCP (Model Context Protocol) ────────────────────────
+# Lista declarativa de qué MCPs usa este repo y para qué. La config
+# técnica (command, args, env vars) vive en `.mcp.json` al root del
+# repo (estándar Claude Code; Cursor lee `.cursor/mcp.json`, Codex CLI
+# usa su propia ubicación — ver AGENTS.md § Servidores MCP).
+#
+# Para agregar un MCP nuevo (ej. SonarQube):
+#   1. Agregar entrada acá (name + purpose + when aplica)
+#   2. Configurar el server en `.mcp.json`
+#   3. Documentar env vars requeridas en `.env.example`
+#   4. (Opcional) Mencionar en AGENTS.md § Servidores MCP qué habilita
+#
+# Catálogo de MCPs comunes en §13 *Extensibilidad de MCPs* del
+# methodology (azure-devops, sonarqube, github, jira, postgres,
+# figma, slack, etc.).
+mcps: []
+# Ejemplos (descomentar y configurar según el repo):
+# mcps:
+#   - name: azure-devops
+#     purpose: "Sync con Azure Boards, PRs y Pipelines"
+#     enabled_when: "tracker: azure-devops"
+#   - name: sonarqube
+#     purpose: "Análisis de calidad de código y vulnerabilidades"
+#     docs: "https://docs.sonarsource.com/sonarqube/latest/"
+#   - name: figma
+#     purpose: "Lectura de diseños desde el servicio de diseño"
+#     enabled_when: "design_service declarado"
